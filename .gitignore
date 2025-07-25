@@ -1,0 +1,18 @@
+# Kubernetes Lab .gitignore
+
+# Temporary files
+*.tmp
+*.log
+
+# Dashboard user file (created by scripts)
+dashboard-adminuser.yaml
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*~
