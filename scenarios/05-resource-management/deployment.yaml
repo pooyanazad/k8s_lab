@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-resources
+  namespace: resource-demo
+  labels:
+    app: nginx-resources
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx-resources
+  template:
+    metadata:
+      labels:
+        app: nginx-resources
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.21
+        ports:
+        - containerPort: 80
+        # Resource requests and limits
+        resources:
+          requests:
+            cpu: "100m"    # 0.1 CPU cores
+            memory: "128Mi" # 128 MiB memory
+          limits:
+            cpu: "200m"    # 0.2 CPU cores
+            memory: "256Mi" # 256 MiB memory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-resources-service
+  namespace: resource-demo
+spec:
+  selector:
+    app: nginx-resources
+  ports:
+  - port: 80
+    targetPort: 80
+  type: ClusterIP
