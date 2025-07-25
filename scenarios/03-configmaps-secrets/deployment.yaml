@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-config
+  labels:
+    app: nginx-config
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-config
+  template:
+    metadata:
+      labels:
+        app: nginx-config
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.21
+        ports:
+        - containerPort: 80
+        # Environment variables from ConfigMap
+        envFrom:
+        - configMapRef:
+            name: nginx-config
+        # Environment variables from Secret
+        env:
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: DB_USER
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: DB_PASS
+        # Mount ConfigMap as volume
+        volumeMounts:
+        - name: nginx-config-volume
+          mountPath: /etc/nginx/conf.d
+      volumes:
+      - name: nginx-config-volume
+        configMap:
+          name: nginx-config
+          items:
+          - key: default.conf
+            path: default.conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-config-service
+spec:
+  selector:
+    app: nginx-config
+  ports:
+  - port: 80
+    targetPort: 80
+  type: ClusterIP
