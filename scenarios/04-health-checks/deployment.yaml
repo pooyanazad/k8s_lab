@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-health
+  labels:
+    app: nginx-health
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-health
+  template:
+    metadata:
+      labels:
+        app: nginx-health
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.21
+        ports:
+        - containerPort: 80
+        # Add initialization container to create health check file
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "echo 'OK' > /usr/share/nginx/html/health && echo 'OK' > /usr/share/nginx/html/ready"]
+        # Liveness probe - checks if the container is running properly
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 3
+        # Readiness probe - checks if the container is ready to receive traffic
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 3
+        # Resource limits
+        resources:
+          limits:
+            cpu: "0.2"
+            memory: "128Mi"
+          requests:
+            cpu: "0.1"
+            memory: "64Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-health-service
+spec:
+  selector:
+    app: nginx-health
+  ports:
+  - port: 80
+    targetPort: 80
+  type: ClusterIP
