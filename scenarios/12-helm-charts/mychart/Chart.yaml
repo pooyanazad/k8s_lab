@@ -1,0 +1,23 @@
+apiVersion: v2
+name: mychart
+description: A Helm chart for Kubernetes demonstration
+
+# A chart can be either an 'application' or a 'library' chart.
+type: application
+
+# Chart version
+version: 0.1.0
+
+# Application version to be deployed
+appVersion: "1.16.0"
+
+# Keywords for this chart
+keywords:
+  - demo
+  - kubernetes
+  - helm
+
+# Maintainer information
+maintainers:
+  - name: Kubernetes Lab
+    email: example@example.com
