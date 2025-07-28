@@ -1,0 +1,15 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hello
+spec:
+  template:
+    spec:
+      containers:
+      - name: hello
+        image: busybox:1.28
+        command: ['sh', '-c', 'echo "Hello from the Kubernetes Job!" && sleep 10']
+      restartPolicy: OnFailure
+  backoffLimit: 4
+  completions: 3    # Number of successful pod completions required
+  parallelism: 2    # Number of pods that can run in parallel
