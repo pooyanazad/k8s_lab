@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: prod-client
+  namespace: prod
+spec:
+  containers:
+  - name: busybox
+    image: busybox:1.28
+    command: ["sleep", "3600"]
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dev-client
+  namespace: dev
+spec:
+  containers:
+  - name: busybox
+    image: busybox:1.28
+    command: ["sleep", "3600"]
