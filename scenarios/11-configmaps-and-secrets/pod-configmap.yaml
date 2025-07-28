@@ -1,0 +1,42 @@
+# Pod using ConfigMap as environment variables
+apiVersion: v1
+kind: Pod
+metadata:
+  name: config-env-pod
+spec:
+  containers:
+    - name: test-container
+      image: busybox:1.28
+      command: [ "/bin/sh", "-c", "env" ]
+      env:
+        # Define an environment variable
+        - name: SPECIAL_LEVEL_KEY
+          valueFrom:
+            configMapKeyRef:
+              name: game-config
+              key: player_initial_lives
+        - name: SPECIAL_TYPE_KEY
+          valueFrom:
+            configMapKeyRef:
+              name: game-config
+              key: ui_properties_file_name
+  restartPolicy: Never
+---
+# Pod using ConfigMap as volume
+apiVersion: v1
+kind: Pod
+metadata:
+  name: config-vol-pod
+spec:
+  containers:
+    - name: test-container
+      image: busybox:1.28
+      command: ["/bin/sh", "-c", "cat /config/game.properties; sleep 3600"]
+      volumeMounts:
+      - name: config-volume
+        mountPath: /config
+  volumes:
+    - name: config-volume
+      configMap:
+        name: game-config
+  restartPolicy: Never
