@@ -1,0 +1,11 @@
+# Custom values for mychart
+# This is a YAML-formatted file.
+
+replicaCount: 2
+
+service:
+  type: NodePort
+
+config:
+  message: "Hello, customized Helm!"
+  color: green
